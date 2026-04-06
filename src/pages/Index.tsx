@@ -1,303 +1,395 @@
 import { useState, useEffect, useRef } from "react";
-import Icon from "@/components/ui/icon";
 
-const projects = [
+const NAV_ITEMS = [
+  { id: "about", label: "About" },
+  { id: "experience", label: "Experience" },
+  { id: "work", label: "Work" },
+  { id: "tools", label: "Tools" },
+  { id: "music", label: "Music" },
+  { id: "teaching", label: "Teaching" },
+  { id: "contact", label: "Contact" },
+];
+
+const EXPERIENCE = [
   {
-    id: 1,
-    title: "Neural Portraits",
-    category: "AI Art / Midjourney",
-    year: "2024",
-    description: "Серия портретов, созданных с помощью нейросетей. Исследование границ между реальностью и цифровым искусством.",
-    tags: ["Midjourney", "Stable Diffusion", "Art Direction"],
-    accent: "#c8a96e",
-    image: "https://images.unsplash.com/photo-1658989044538-defae83a92c0?w=800&q=80",
+    period: "2020 — 2022",
+    title: "Freelance",
+    items: [
+      "First experiments with AI and generative content",
+      "Early adoption of ChatGPT for creative workflows",
+    ],
   },
   {
-    id: 2,
-    title: "Brand Identity 2.0",
-    category: "AI Branding / DALL·E",
-    year: "2024",
-    description: "Разработка визуальных идентичностей для брендов с использованием generative AI-инструментов.",
-    tags: ["DALL·E 3", "Adobe Firefly", "Brand Design"],
-    accent: "#8eb4c8",
-    image: "https://images.unsplash.com/photo-1633177317976-3f9bc45e1d1d?w=800&q=80",
+    period: "2022 — 2024",
+    title: "Commercial AI Projects",
+    items: [
+      "Product visuals for Etsy (carpets, wallpapers)",
+      "Managing three e-commerce stores simultaneously",
+      "AI-generated imagery for product listings",
+    ],
   },
   {
-    id: 3,
-    title: "Motion Stories",
-    category: "AI Video / Runway",
-    year: "2023",
-    description: "Короткометражные видео-нарративы, сгенерированные с помощью Runway ML и Pika Labs.",
-    tags: ["Runway", "Pika Labs", "Video AI"],
-    accent: "#b8c8a9",
-    image: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=800&q=80",
-  },
-  {
-    id: 4,
-    title: "Type & Texture",
-    category: "AI Typography / Adobe",
-    year: "2023",
-    description: "Типографические эксперименты на пересечении AI-генерации и ручного дизайна.",
-    tags: ["Adobe Firefly", "Canva AI", "Typography"],
-    accent: "#c8a9b8",
-    image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&q=80",
+    period: "2025",
+    title: "xLabs — Belarus",
+    items: [
+      "Animated film «Belovezhskaya Pushcha»",
+      "Storyboarding and visual concept development",
+      "7 months of in-house team collaboration",
+    ],
   },
 ];
 
-const skills = [
-  "Midjourney", "Stable Diffusion", "DALL·E 3", "Runway ML",
-  "Pika Labs", "Adobe Firefly", "Sora", "Kling AI", "CapCut AI", "ChatGPT",
+const CLIENT_WORK = [
+  "Cosmetic brand website design",
+  "Furniture and carpet visual production",
+  "AI content for sportswear collections",
+  "Experimental visual concepts & art direction",
 ];
 
-export default function Index() {
-  const [activeSection, setActiveSection] = useState("home");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [hoveredProject, setHoveredProject] = useState<number | null>(null);
-  const [loaded, setLoaded] = useState(false);
-  const heroRef = useRef<HTMLDivElement>(null);
+const TOOLS_PRIMARY = ["ChatGPT", "Gemini 3", "Higgsfield"];
+const TOOLS_SECONDARY = ["MidJourney", "Kling", "Sora", "Grok", "Stable Diffusion"];
 
+const MUSIC_PROJECTS = [
+  { name: "Project I", desc: "Full album on Yandex Music", link: "#" },
+  { name: "Project II", desc: "Full album on Yandex Music", link: "#" },
+  { name: "Project III", desc: "Full album on Yandex Music", link: "#" },
+];
+
+const PUBLICATIONS = [
+  { title: "AI Photography — Fashion Editorial", outlet: "Magazine / Platform", year: "2024" },
+  { title: "Digital Art & Generative Visuals", outlet: "Online Feature", year: "2024" },
+  { title: "Narrative Through AI", outlet: "Art Publication", year: "2023" },
+];
+
+function useScrollSpy() {
+  const [active, setActive] = useState("hero");
   useEffect(() => {
-    setTimeout(() => setLoaded(true), 100);
-  }, []);
-
-  const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-    setMenuOpen(false);
-    setActiveSection(id);
-  };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ["home", "about", "projects", "contacts"];
-      for (const id of sections) {
+    const handler = () => {
+      const ids = ["hero", ...NAV_ITEMS.map((n) => n.id)];
+      for (const id of ids) {
         const el = document.getElementById(id);
         if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= 100 && rect.bottom >= 100) {
-            setActiveSection(id);
+          const { top, bottom } = el.getBoundingClientRect();
+          if (top <= 80 && bottom > 80) {
+            setActive(id);
             break;
           }
         }
       }
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
+  return active;
+}
+
+function useInView(threshold = 0.12) {
+  const ref = useRef<HTMLElement>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setInView(true); },
+      { threshold }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, inView };
+}
+
+function Section({
+  id,
+  children,
+  className = "",
+}: {
+  id: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const { ref, inView } = useInView();
+  return (
+    <section
+      id={id}
+      ref={ref as React.RefObject<HTMLElement>}
+      className={`d-section ${inView ? "d-section--visible" : ""} ${className}`}
+    >
+      {children}
+    </section>
+  );
+}
+
+export default function Index() {
+  const [loaded, setLoaded] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const active = useScrollSpy();
+
+  useEffect(() => {
+    setTimeout(() => setLoaded(true), 80);
   }, []);
 
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setMenuOpen(false);
+  };
+
   return (
-    <div className="pf-root">
+    <div className="d-root">
+
       {/* NAV */}
-      <nav className={`pf-nav ${loaded ? "pf-nav--visible" : ""}`}>
-        <button className="pf-logo" onClick={() => scrollTo("home")}>
-          AI·CREATOR
+      <header className={`d-nav ${loaded ? "d-nav--in" : ""}`}>
+        <button className="d-nav__logo" onClick={() => scrollTo("hero")}>
+          D·R
         </button>
-        <div className={`pf-nav-links ${menuOpen ? "pf-nav-links--open" : ""}`}>
-          {[
-            { id: "home", label: "Главная" },
-            { id: "about", label: "О мне" },
-            { id: "projects", label: "Проекты" },
-            { id: "contacts", label: "Контакты" },
-          ].map((item) => (
+        <nav className={`d-nav__links ${menuOpen ? "d-nav__links--open" : ""}`}>
+          {NAV_ITEMS.map((item) => (
             <button
               key={item.id}
+              className={`d-nav__link ${active === item.id ? "d-nav__link--active" : ""}`}
               onClick={() => scrollTo(item.id)}
-              className={`pf-nav-link ${activeSection === item.id ? "pf-nav-link--active" : ""}`}
             >
               {item.label}
             </button>
           ))}
-        </div>
-        <button className="pf-menu-btn" onClick={() => setMenuOpen(!menuOpen)}>
-          <Icon name={menuOpen ? "X" : "Menu"} size={22} />
+        </nav>
+        <button
+          className="d-nav__burger"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Menu"
+        >
+          <span className={menuOpen ? "open" : ""} />
+          <span className={menuOpen ? "open" : ""} />
         </button>
-      </nav>
+      </header>
 
       {/* HERO */}
-      <section id="home" className="pf-hero" ref={heroRef}>
-        <div className={`pf-hero__left ${loaded ? "pf-anim--in" : ""}`}>
-          <div className="pf-eyebrow">AI Content Creator</div>
-          <h1 className="pf-hero-title">
-            Создаю<br />
-            <em className="pf-hero-em">визуальные</em><br />
-            миры с AI
-          </h1>
-          <p className="pf-hero-desc">
-            Нейросети как инструмент творчества — генеративное искусство,
-            брендинг, видео и типографика нового поколения.
+      <section id="hero" className="d-hero">
+        <div className={`d-hero__inner ${loaded ? "d-hero--in" : ""}`}>
+          <p className="d-hero__role">
+            AI Content Creator&nbsp;&nbsp;·&nbsp;&nbsp;AI Artist&nbsp;&nbsp;·&nbsp;&nbsp;Narrative Designer&nbsp;&nbsp;·&nbsp;&nbsp;AI Music Producer
           </p>
-          <div className="pf-hero-btns">
-            <button className="pf-btn pf-btn--primary" onClick={() => scrollTo("projects")}>
-              Смотреть проекты
-            </button>
-            <button className="pf-btn pf-btn--ghost" onClick={() => scrollTo("contacts")}>
-              Связаться
-            </button>
-          </div>
+          <h1 className="d-hero__name">
+            Rimma<br />
+            Rovitch<br />
+            <em>Darya</em>
+          </h1>
+          <p className="d-hero__desc">
+            I create visuals, narratives, music and digital<br />
+            experiences using AI — from fashion and product<br />
+            design to animation, games and music.
+          </p>
         </div>
-
-        <div className={`pf-hero__right ${loaded ? "pf-anim--in pf-anim--delay" : ""}`}>
-          <div className="pf-hero-img-wrap">
-            <img
-              src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=90"
-              alt="AI Art"
-              className="pf-hero-img"
-            />
-            <div className="pf-hero-img-grad" />
-          </div>
-          <div className="pf-available-badge">
-            <span className="pf-dot" />
-            Открыт для проектов
-          </div>
-        </div>
-
-        <button className="pf-scroll-hint" onClick={() => scrollTo("about")}>
-          <Icon name="ArrowDown" size={18} />
+        <button className="d-hero__down" onClick={() => scrollTo("about")}>
+          scroll ↓
         </button>
       </section>
 
       {/* ABOUT */}
-      <section id="about" className="pf-about">
-        <div className="pf-container">
-          <div className="pf-about-grid">
-            <div className="pf-about-text">
-              <div className="pf-eyebrow">О мне</div>
-              <h2 className="pf-section-title">
-                На стыке технологий<br />и творчества
+      <Section id="about">
+        <div className="d-container">
+          <div className="d-row">
+            <div className="d-row__label">
+              <span className="d-label">About Me</span>
+            </div>
+            <div className="d-row__body">
+              <h2 className="d-h2">
+                At the intersection of<br />art, design and technology
               </h2>
-              <p className="pf-body-text">
-                Работаю с AI-инструментами с 2022 года. Создаю контент, который
-                сложно отличить от реального — и в этом весь смысл. Генеративные
-                нейросети позволяют мне воплощать идеи, которые раньше требовали
-                целых команд.
+              <p className="d-body">
+                I've been working with neural networks since 2022 — from the moment
+                of their mass emergence. Since 2020, I actively use ChatGPT and
+                immediately began applying AI in commercial and artistic projects.
               </p>
-              <p className="pf-body-text">
-                Специализируюсь на Midjourney, Stable Diffusion, Runway ML и
-                других ведущих платформах. Помогаю брендам и творческим людям
-                найти свой визуальный язык в эпоху AI.
+              <p className="d-body">
+                I work at the intersection of art, design, narrative and technology.
+                My practice spans visual creation, storytelling, music production
+                and digital world-building — all through the lens of artificial intelligence.
               </p>
-              <div className="pf-skills">
-                {skills.map((skill) => (
-                  <span key={skill} className="pf-skill">{skill}</span>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* EXPERIENCE */}
+      <Section id="experience" className="d-bg-off">
+        <div className="d-container">
+          <div className="d-row">
+            <div className="d-row__label">
+              <span className="d-label">Experience</span>
+            </div>
+            <div className="d-row__body">
+              <h2 className="d-h2">Career</h2>
+              <div className="d-timeline">
+                {EXPERIENCE.map((item, i) => (
+                  <div key={i} className="d-timeline__item">
+                    <div className="d-timeline__period">{item.period}</div>
+                    <div className="d-timeline__content">
+                      <div className="d-timeline__title">{item.title}</div>
+                      <ul className="d-timeline__list">
+                        {item.items.map((line, j) => (
+                          <li key={j}>{line}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      </Section>
 
-            <div className="pf-about-visual">
-              <div className="pf-about-img-wrap">
-                <img
-                  src="https://images.unsplash.com/photo-1684779847639-fbcc7a6a98fb?w=700&q=85"
-                  alt="About"
-                  className="pf-about-img"
-                />
+      {/* WORK */}
+      <Section id="work">
+        <div className="d-container">
+          <div className="d-row">
+            <div className="d-row__label">
+              <span className="d-label">Work</span>
+            </div>
+            <div className="d-row__body">
+              <h2 className="d-h2">Outsource & Client Work</h2>
+              <ul className="d-work-list">
+                {CLIENT_WORK.map((item, i) => (
+                  <li key={i} className="d-work-item">
+                    <span className="d-work-idx">0{i + 1}</span>
+                    <span className="d-work-text">{item}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="d-rule" />
+
+              <h3 className="d-h3">Publications</h3>
+              <div className="d-pubs">
+                {PUBLICATIONS.map((pub, i) => (
+                  <div key={i} className="d-pub">
+                    <div>
+                      <div className="d-pub__title">{pub.title}</div>
+                      <div className="d-pub__outlet">{pub.outlet}</div>
+                    </div>
+                    <div className="d-pub__year">{pub.year}</div>
+                  </div>
+                ))}
               </div>
-              <div className="pf-stats">
-                <div className="pf-stat">
-                  <span className="pf-stat-num">80+</span>
-                  <span className="pf-stat-label">Проектов</span>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* TOOLS */}
+      <Section id="tools" className="d-bg-off">
+        <div className="d-container">
+          <div className="d-row">
+            <div className="d-row__label">
+              <span className="d-label">Tools</span>
+            </div>
+            <div className="d-row__body">
+              <h2 className="d-h2">AI Tools I Work With</h2>
+              <div className="d-tools-block">
+                <div className="d-tools-group-label">Primary</div>
+                <div className="d-tools-row">
+                  {TOOLS_PRIMARY.map((t) => (
+                    <span key={t} className="d-tool d-tool--bold">{t}</span>
+                  ))}
                 </div>
-                <div className="pf-stat">
-                  <span className="pf-stat-num">2+</span>
-                  <span className="pf-stat-label">Года опыта</span>
-                </div>
-                <div className="pf-stat">
-                  <span className="pf-stat-num">10+</span>
-                  <span className="pf-stat-label">AI-инструментов</span>
+              </div>
+              <div className="d-tools-block">
+                <div className="d-tools-group-label">Additional</div>
+                <div className="d-tools-row">
+                  {TOOLS_SECONDARY.map((t) => (
+                    <span key={t} className="d-tool">{t}</span>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </Section>
 
-      {/* PROJECTS */}
-      <section id="projects" className="pf-projects">
-        <div className="pf-container">
-          <div className="pf-section-header">
-            <div className="pf-eyebrow">Проекты</div>
-            <h2 className="pf-section-title">Избранные работы</h2>
-          </div>
-
-          <div className="pf-projects-grid">
-            {projects.map((project, i) => (
-              <div
-                key={project.id}
-                className={`pf-card ${i % 3 === 0 ? "pf-card--wide" : ""}`}
-                onMouseEnter={() => setHoveredProject(project.id)}
-                onMouseLeave={() => setHoveredProject(null)}
-              >
-                <div className="pf-card-img-wrap">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className={`pf-card-img ${hoveredProject === project.id ? "pf-card-img--zoom" : ""}`}
-                  />
-                  <div className="pf-card-overlay" />
-                </div>
-                <div className="pf-card-body">
-                  <div className="pf-card-meta">
-                    <span className="pf-card-cat">{project.category}</span>
-                    <span className="pf-card-year">{project.year}</span>
+      {/* MUSIC */}
+      <Section id="music">
+        <div className="d-container">
+          <div className="d-row">
+            <div className="d-row__label">
+              <span className="d-label">Music</span>
+            </div>
+            <div className="d-row__body">
+              <h2 className="d-h2">AI Music Projects</h2>
+              <p className="d-body">
+                AI musician, creator and producer. Three independent music projects,
+                each with a full album release on Yandex Music.
+              </p>
+              <div className="d-music-list">
+                {MUSIC_PROJECTS.map((proj, i) => (
+                  <div key={i} className="d-music-item">
+                    <div>
+                      <div className="d-music-name">{proj.name}</div>
+                      <div className="d-music-desc">{proj.desc}</div>
+                    </div>
+                    <a href={proj.link} className="d-music-btn">Listen →</a>
                   </div>
-                  <h3 className="pf-card-title">{project.title}</h3>
-                  <p className="pf-card-desc">{project.description}</p>
-                  <div className="pf-card-tags">
-                    {project.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="pf-card-tag"
-                        style={{ borderColor: project.accent, color: project.accent }}
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <button className="pf-card-cta">
-                    Смотреть проект <Icon name="ArrowUpRight" size={14} />
-                  </button>
-                </div>
+                ))}
               </div>
-            ))}
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* TEACHING */}
+      <Section id="teaching" className="d-bg-off">
+        <div className="d-container">
+          <div className="d-row">
+            <div className="d-row__label">
+              <span className="d-label">Teaching</span>
+            </div>
+            <div className="d-row__body">
+              <h2 className="d-h2">Teaching & Mentorship</h2>
+              <p className="d-body">
+                Lead instructor of a Narrative Design course.
+                Five years in game development as a narrative designer.
+              </p>
+              <p className="d-body">Course curriculum includes:</p>
+              <ul className="d-teach-list">
+                <li>Generating visuals and environments through AI</li>
+                <li>Creating characters, backgrounds and design systems</li>
+                <li>Working with AI-generated music</li>
+                <li>Building coherent worlds and narratives</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* CONTACT */}
+      <section id="contact" className="d-contact">
+        <div className="d-container">
+          <h2 className="d-contact-title">Get in touch</h2>
+          <div className="d-contact-grid">
+            <a href="mailto:hello@example.com" className="d-contact-item">
+              <span className="d-contact-type">Email</span>
+              <span className="d-contact-val">hello@example.com</span>
+            </a>
+            <a href="#" className="d-contact-item">
+              <span className="d-contact-type">Behance</span>
+              <span className="d-contact-val">Portfolio →</span>
+            </a>
+            <a href="#" className="d-contact-item">
+              <span className="d-contact-type">Yandex Music</span>
+              <span className="d-contact-val">3 Projects →</span>
+            </a>
+            <a href="#" className="d-contact-item">
+              <span className="d-contact-type">Telegram</span>
+              <span className="d-contact-val">@username</span>
+            </a>
+          </div>
+          <div className="d-contact-footer">
+            <span>© 2025 Darya Rimarovich</span>
+            <button className="d-back-top" onClick={() => scrollTo("hero")}>↑ Top</button>
           </div>
         </div>
       </section>
 
-      {/* CONTACTS */}
-      <section id="contacts" className="pf-contacts">
-        <div className="pf-container pf-contacts-inner">
-          <div className="pf-eyebrow pf-eyebrow--light">Контакты</div>
-          <h2 className="pf-contacts-title">
-            Есть идея?<br />
-            <em className="pf-contacts-em">Давайте создадим</em><br />
-            что-то вместе.
-          </h2>
-          <p className="pf-contacts-desc">
-            Открыт для сотрудничества, freelance-проектов и творческих коллабораций.
-          </p>
-          <div className="pf-contacts-links">
-            <a href="mailto:hello@example.com" className="pf-contact-link">
-              <Icon name="Mail" size={20} />
-              hello@example.com
-            </a>
-            <a href="https://t.me/username" className="pf-contact-link" target="_blank" rel="noreferrer">
-              <Icon name="Send" size={20} />
-              Telegram
-            </a>
-            <a href="https://instagram.com/username" className="pf-contact-link" target="_blank" rel="noreferrer">
-              <Icon name="Instagram" size={20} />
-              Instagram
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER */}
-      <footer className="pf-footer">
-        <span>© 2024 AI·CREATOR. Все права защищены.</span>
-        <button className="pf-footer-top" onClick={() => scrollTo("home")}>
-          <Icon name="ArrowUp" size={15} /> Наверх
-        </button>
-      </footer>
     </div>
   );
 }
