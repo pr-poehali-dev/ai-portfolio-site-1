@@ -4,88 +4,51 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 97%;
+    --foreground: 0 0% 8%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 0 0% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 0 0% 8%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 0 0% 8%;
+    --primary-foreground: 0 0% 97%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 0 0% 93%;
+    --secondary-foreground: 0 0% 8%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 93%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 0 0% 93%;
+    --accent-foreground: 0 0% 8%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 97%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 0 0% 8%;
 
-    --radius: 0.5rem;
+    --radius: 0.125rem;
+
+    /* Portfolio custom */
+    --pf-bg: #f6f5f3;
+    --pf-dark: #111110;
+    --pf-mid: #2a2a28;
+    --pf-muted: #7a7a76;
+    --pf-border: #e2e1de;
+    --pf-accent: #c8a96e;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
@@ -97,5 +60,763 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 300;
+    background-color: var(--pf-bg);
+    color: var(--pf-dark);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: "Cormorant Garamond", serif;
+  }
+}
+
+/* ─── ROOT ─────────────────────────────────────── */
+.pf-root {
+  min-height: 100vh;
+  background-color: var(--pf-bg);
+  color: var(--pf-dark);
+}
+
+/* ─── NAV ─────────────────────────────────────── */
+.pf-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.5rem;
+  height: 64px;
+  background: rgba(246, 245, 243, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--pf-border);
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+
+.pf-nav--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.pf-logo {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: var(--pf-dark);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.pf-nav-links {
+  display: flex;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.pf-nav-link {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--pf-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+  position: relative;
+}
+
+.pf-nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--pf-dark);
+  transition: width 0.25s ease;
+}
+
+.pf-nav-link:hover::after,
+.pf-nav-link--active::after {
+  width: 100%;
+}
+
+.pf-nav-link:hover,
+.pf-nav-link--active {
+  color: var(--pf-dark);
+}
+
+.pf-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--pf-dark);
+  padding: 4px;
+}
+
+/* ─── HERO ─────────────────────────────────────── */
+.pf-hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 80px 2.5rem 0;
+  gap: 4rem;
+  position: relative;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.pf-hero__left {
+  padding-top: 2rem;
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
+}
+
+.pf-hero__right {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.8s ease 0.2s,
+    transform 0.8s ease 0.2s;
+  position: relative;
+}
+
+.pf-anim--in {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.pf-eyebrow {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--pf-muted);
+  margin-bottom: 1.25rem;
+}
+
+.pf-eyebrow--light {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.pf-hero-title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(3.5rem, 7vw, 6.5rem);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--pf-dark);
+  margin-bottom: 1.75rem;
+}
+
+.pf-hero-em {
+  font-style: italic;
+  color: var(--pf-accent);
+}
+
+.pf-hero-desc {
+  font-size: 0.95rem;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--pf-muted);
+  margin-bottom: 2.5rem;
+  max-width: 420px;
+}
+
+.pf-hero-btns {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pf-btn {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  padding: 0.85rem 2rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.pf-btn--primary {
+  background: var(--pf-dark);
+  color: var(--pf-bg);
+}
+
+.pf-btn--primary:hover {
+  background: var(--pf-mid);
+}
+
+.pf-btn--ghost {
+  background: transparent;
+  color: var(--pf-dark);
+  border: 1px solid var(--pf-border);
+}
+
+.pf-btn--ghost:hover {
+  border-color: var(--pf-dark);
+}
+
+.pf-hero-img-wrap {
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+}
+
+.pf-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease;
+}
+
+.pf-hero-img-wrap:hover .pf-hero-img {
+  transform: scale(1.03);
+}
+
+.pf-hero-img-grad {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 60%,
+    rgba(246, 245, 243, 0.4) 100%
+  );
+}
+
+.pf-available-badge {
+  position: absolute;
+  bottom: -1rem;
+  left: -1.5rem;
+  background: white;
+  border: 1px solid var(--pf-border);
+  padding: 0.65rem 1.25rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--pf-mid);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.pf-dot {
+  width: 7px;
+  height: 7px;
+  background: #5ab552;
+  border-radius: 50%;
+  animation: pulse-dot 2s ease infinite;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.3);
+  }
+}
+
+.pf-scroll-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: none;
+  border: 1px solid var(--pf-border);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--pf-muted);
+  animation: bounce-hint 2.5s ease infinite;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.pf-scroll-hint:hover {
+  border-color: var(--pf-dark);
+  color: var(--pf-dark);
+}
+
+@keyframes bounce-hint {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(5px);
+  }
+}
+
+/* ─── CONTAINER ─────────────────────────────────── */
+.pf-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2.5rem;
+}
+
+/* ─── ABOUT ─────────────────────────────────────── */
+.pf-about {
+  padding: 8rem 0;
+  background: white;
+}
+
+.pf-about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: start;
+}
+
+.pf-section-title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 300;
+  line-height: 1.15;
+  color: var(--pf-dark);
+  margin-bottom: 1.75rem;
+}
+
+.pf-body-text {
+  font-size: 0.92rem;
+  font-weight: 300;
+  line-height: 1.85;
+  color: var(--pf-muted);
+  margin-bottom: 1.25rem;
+}
+
+.pf-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.pf-skill {
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pf-mid);
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--pf-border);
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.pf-skill:hover {
+  border-color: var(--pf-accent);
+  color: var(--pf-accent);
+}
+
+.pf-about-img-wrap {
+  position: relative;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.pf-about-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.pf-about-img-wrap:hover .pf-about-img {
+  transform: scale(1.04);
+}
+
+.pf-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--pf-border);
+  padding-top: 1.5rem;
+}
+
+.pf-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-right: 1rem;
+  border-right: 1px solid var(--pf-border);
+}
+
+.pf-stat:last-child {
+  border-right: none;
+  padding-left: 1rem;
+  padding-right: 0;
+}
+
+.pf-stat:nth-child(2) {
+  padding-left: 1rem;
+}
+
+.pf-stat-num {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--pf-dark);
+  line-height: 1;
+}
+
+.pf-stat-label {
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pf-muted);
+}
+
+/* ─── PROJECTS ─────────────────────────────────── */
+.pf-projects {
+  padding: 8rem 0;
+  background: var(--pf-bg);
+}
+
+.pf-section-header {
+  margin-bottom: 4rem;
+}
+
+.pf-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5px;
+  background: var(--pf-border);
+}
+
+.pf-card {
+  background: var(--pf-bg);
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.pf-card--wide {
+  grid-column: span 2;
+}
+
+.pf-card-img-wrap {
+  position: relative;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+}
+
+.pf-card--wide .pf-card-img-wrap {
+  aspect-ratio: 21/9;
+}
+
+.pf-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+
+.pf-card-img--zoom {
+  transform: scale(1.06);
+}
+
+.pf-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    rgba(17, 17, 16, 0.35) 100%
+  );
+  transition: opacity 0.4s;
+}
+
+.pf-card:hover .pf-card-overlay {
+  opacity: 0.8;
+}
+
+.pf-card-body {
+  padding: 1.75rem 2rem 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-top: none;
+}
+
+.pf-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.pf-card-cat {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pf-muted);
+}
+
+.pf-card-year {
+  font-size: 0.7rem;
+  color: var(--pf-muted);
+}
+
+.pf-card-title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.75rem;
+  font-weight: 400;
+  color: var(--pf-dark);
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.pf-card-desc {
+  font-size: 0.85rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--pf-muted);
+  margin-bottom: 1.25rem;
+  flex: 1;
+}
+
+.pf-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.5rem;
+}
+
+.pf-card-tag {
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.65rem;
+  border: 1px solid;
+  opacity: 0.75;
+  transition: opacity 0.2s;
+}
+
+.pf-card:hover .pf-card-tag {
+  opacity: 1;
+}
+
+.pf-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--pf-dark);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: gap 0.2s;
+}
+
+.pf-card:hover .pf-card-cta {
+  gap: 0.6rem;
+}
+
+/* ─── CONTACTS ─────────────────────────────────── */
+.pf-contacts {
+  padding: 10rem 0;
+  background: var(--pf-dark);
+  color: white;
+}
+
+.pf-contacts-inner {
+  text-align: center;
+}
+
+.pf-contacts-title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(3rem, 7vw, 6rem);
+  font-weight: 300;
+  line-height: 1.05;
+  color: white;
+  margin-bottom: 1.5rem;
+}
+
+.pf-contacts-em {
+  font-style: italic;
+  color: var(--pf-accent);
+}
+
+.pf-contacts-desc {
+  font-size: 0.92rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 3rem;
+}
+
+.pf-contacts-links {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.pf-contact-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  padding-bottom: 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.pf-contact-link:hover {
+  color: white;
+  border-color: white;
+}
+
+/* ─── FOOTER ─────────────────────────────────── */
+.pf-footer {
+  background: var(--pf-dark);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 1.5rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.06em;
+}
+
+.pf-footer-top {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.7rem;
+  cursor: pointer;
+  padding: 0.4rem 0.85rem;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+  font-family: "IBM Plex Sans", sans-serif;
+  letter-spacing: 0.06em;
+}
+
+.pf-footer-top:hover {
+  color: white;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* ─── RESPONSIVE ─────────────────────────────── */
+@media (max-width: 900px) {
+  .pf-hero {
+    grid-template-columns: 1fr;
+    padding-top: 100px;
+    min-height: auto;
+    padding-bottom: 4rem;
+    gap: 2rem;
+  }
+
+  .pf-hero__right {
+    order: -1;
+  }
+
+  .pf-hero-img-wrap {
+    aspect-ratio: 3/2;
+    max-height: 380px;
+  }
+
+  .pf-available-badge {
+    left: 0;
+  }
+
+  .pf-scroll-hint {
+    display: none;
+  }
+
+  .pf-about-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .pf-projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pf-card--wide {
+    grid-column: span 1;
+  }
+
+  .pf-card--wide .pf-card-img-wrap {
+    aspect-ratio: 16/9;
+  }
+
+  .pf-nav-links {
+    display: none;
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    background: rgba(246, 245, 243, 0.98);
+    backdrop-filter: blur(12px);
+    flex-direction: column;
+    padding: 2rem;
+    gap: 1.5rem;
+    border-bottom: 1px solid var(--pf-border);
+  }
+
+  .pf-nav-links--open {
+    display: flex;
+  }
+
+  .pf-menu-btn {
+    display: flex;
+  }
+
+  .pf-contacts-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
   }
 }
